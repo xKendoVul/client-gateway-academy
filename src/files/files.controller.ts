@@ -9,20 +9,24 @@ import {
   Body,
   Inject,
   ParseIntPipe,
-  Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
-import { FileQueryDto } from './dto/file.dto';
+import { FileQueryDto, UploadBodyDto, UpdateFileDto } from './dto/file.dto';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post('upload')
-  async uploadFile(@Req() req: Request) {
-    const formData = req.body;
-    return this.filesService.upload(formData);
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: UploadBodyDto,
+  ) {
+    return this.filesService.upload(file, body);
   }
 
   @Get()
@@ -41,7 +45,10 @@ export class FilesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateFileDto: any) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateFileDto: UpdateFileDto,
+  ) {
     return this.filesService.update(id, updateFileDto);
   }
 

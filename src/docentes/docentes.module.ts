@@ -17,6 +17,5 @@ import { DOCENTE_SERVICE } from 'src/config/service';
     ]),
   ],
   controllers: [DocentesController],
-  providers: [],
 })
-export class DocenteModule { }
+export class DocenteModule {}

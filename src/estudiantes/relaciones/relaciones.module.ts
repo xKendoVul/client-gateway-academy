@@ -17,6 +17,5 @@ import { ESTUDIANTE_SERVICE } from 'src/config/service';
     ]),
   ],
   controllers: [SexoController, EtniaController],
-  providers: []
 })
-export class RelacionesModule { }
+export class RelacionesModule {}

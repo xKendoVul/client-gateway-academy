@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
-import { SexoController, EtniaController, CargoController } from './relaciones.controller';
+import {
+  SexoController,
+  EtniaController,
+  CargoController,
+} from './relaciones.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { DOCENTE_SERVICE } from 'src/config/service';
 
@@ -17,6 +21,5 @@ import { DOCENTE_SERVICE } from 'src/config/service';
     ]),
   ],
   controllers: [SexoController, EtniaController, CargoController],
-  providers: []
 })
-export class DocenteRelacionesModule { }
+export class DocenteRelacionesModule {}
