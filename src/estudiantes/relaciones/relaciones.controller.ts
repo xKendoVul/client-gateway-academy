@@ -1,38 +1,76 @@
-import { Body, Controller, Get, Inject, Post } from "@nestjs/common"
-import { ClientProxy } from "@nestjs/microservices"
-import { ESTUDIANTE_SERVICE } from "src/config/service"
-import { CreateEtniaDto, CreateSexoDto } from "./dto/create-relacione.dto"
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { ESTUDIANTE_SERVICE } from 'src/config/service';
+import { CreateEtniaDto, CreateSexoDto } from './dto/create-relacione.dto';
+import { firstValueFrom, timeout } from 'rxjs';
 
 @Controller('estudiantes/sexo')
 export class SexoController {
   constructor(
     @Inject(ESTUDIANTE_SERVICE)
-    private readonly estudianteClient: ClientProxy) { }
+    private readonly estudianteClient: ClientProxy,
+  ) {}
 
   @Post()
-  create(@Body() sexoDto: CreateSexoDto) {
-    return this.estudianteClient.send({ cmd: "crear_sexo" }, sexoDto)
+  async create(@Body() sexoDto: CreateSexoDto) {
+    try {
+      const obs = this.estudianteClient.send({ cmd: 'crear_sexo' }, sexoDto);
+      const result = await firstValueFrom(obs.pipe(timeout(5000)));
+      return result;
+    } catch (err: any) {
+      throw new HttpException('Error al crear sexo', HttpStatus.BAD_GATEWAY);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.estudianteClient.send({ cmd: "encontrar_sexos" }, {})
+  async findAll() {
+    try {
+      const obs = this.estudianteClient.send({ cmd: 'encontrar_sexos' }, {});
+      const result = await firstValueFrom(obs.pipe(timeout(5000)));
+      return result;
+    } catch (err: any) {
+      throw new HttpException('Error al obtener sexos', HttpStatus.BAD_GATEWAY);
+    }
   }
 }
 
-@Controller("estudiantes/etnia")
+@Controller('estudiantes/etnia')
 export class EtniaController {
   constructor(
     @Inject(ESTUDIANTE_SERVICE)
-    private readonly estudianteClient: ClientProxy) { }
+    private readonly estudianteClient: ClientProxy,
+  ) {}
 
   @Post()
-  create(@Body() etniaDto: CreateEtniaDto) {
-    return this.estudianteClient.send({ cmd: "crear_etnia" }, etniaDto)
+  async create(@Body() etniaDto: CreateEtniaDto) {
+    try {
+      const obs = this.estudianteClient.send({ cmd: 'crear_etnia' }, etniaDto);
+      const result = await firstValueFrom(obs.pipe(timeout(5000)));
+      return result;
+    } catch (err: any) {
+      throw new HttpException('Error al crear etnia', HttpStatus.BAD_GATEWAY);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.estudianteClient.send({ cmd: "encontrar_etnias" }, {})
+  async findAll() {
+    try {
+      const obs = this.estudianteClient.send({ cmd: 'encontrar_etnias' }, {});
+      const result = await firstValueFrom(obs.pipe(timeout(5000)));
+      return result;
+    } catch (err: any) {
+      throw new HttpException(
+        'Error al obtener etnias',
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
   }
 }
